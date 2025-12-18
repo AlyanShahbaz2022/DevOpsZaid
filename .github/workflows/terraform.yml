@@ -101,9 +101,7 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
-
-     
-                  - name: Upload Website to S3
+      - name: Upload Website to S3
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           aws s3 sync ./ s3://${{ secrets.AWS_BUCKET_NAME }} --delete \
@@ -112,8 +110,3 @@ jobs:
             --exclude "*.tf" \
             --exclude ".gitignore" \
             --exclude "dockerFile"
-
-
-
-
-
