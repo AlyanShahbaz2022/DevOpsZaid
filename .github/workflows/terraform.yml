@@ -104,7 +104,7 @@ jobs:
       - name: Upload Website to S3
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          aws s3 sync ./ s3://${{ secrets.AWS_BUCKET_NAME }} --delete \
+          aws s3 sync ./ s3://${{ github-devops-terrform-aws-tfstates }} --delete \
             --exclude ".git/*" \
             --exclude ".github/*" \
             --exclude "*.tf" \
