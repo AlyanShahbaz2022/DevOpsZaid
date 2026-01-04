@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "website_bucket" {
-  bucket = "devopszaid-static-site-ad-2026"
+  bucket = "devopszaid-static-site-zaid-20260104"
 }
 
 resource "aws_s3_bucket_public_access_block" "public_access" {
