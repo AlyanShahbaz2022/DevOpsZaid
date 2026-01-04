@@ -17,7 +17,7 @@ jobs:
         # These settings are CRITICAL to fix the CI failure:
         # 1. Correctly initializes the submodule (DevOpsZaid folder).
         # 2. Fetches the full history, ensuring the correct terraform.tfstate file is loaded.
-        submodules: true
+        submodules: false
         fetch-depth: 0
 
     - name: Setup Terraform
