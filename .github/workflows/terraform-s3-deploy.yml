@@ -26,10 +26,11 @@ jobs:
       run: terraform version
 
     - name: Terraform Init
-      run: terraform init
-      working-directory: terraform-s3
-      env:
-        AWS_REGION: ${{ secrets.AWS_REGION }} # <--- ADD THIS LINE
+      run: terraform init
+      working-directory: terraform-s3
+      # FIX: Added env block with correct indentation
+      env:
+        AWS_REGION: ${{ secrets.AWS_REGION }}
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
