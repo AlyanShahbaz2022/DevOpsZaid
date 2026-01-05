@@ -12,14 +12,14 @@ jobs:
 
     steps:
     - name: Checkout repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
-        # These settings are CRITICAL to fix the CI failure:
-        # 1. Correctly initializes the submodule (DevOpsZaid folder).
-        # 2. Fetches the full history, ensuring the correct terraform.tfstate file is loaded.
+        # CRITICAL FIX: Explicitly set submodules to false to bypass the 
+        # persistent Git "exit code 128" error, as the folder should be treated 
+        # as a standard content directory.
         submodules: false
-        fetch-depth: 0
-
+        # fetch-depth: 0 is no longer needed when submodules is false
+    
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
@@ -44,13 +44,15 @@ jobs:
 
     - name: Upload Website Files to S3
       run: |
-        # Sync only the nested DevOpsZaid folder containing the website files
+        # Sync the DevOpsZaid folder content to the S3 bucket.
         aws s3 sync ./DevOpsZaid/ s3://${{ secrets.BUCKET_NAME }} --exclude "terraform-s3/*" --delete
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
+        AWS_REGION: ${{ secrets.REGION }}
 
+    # NOTE: The workaround step is no longer strictly necessary since we fixed 
+    # the checkout, but it doesn't hurt to keep it as a precaution.
     - name: Prevent git submodule cleanup error (workaround)
       run: |
         # Remove local submodule config to avoid post-job "No url found for submodule" error
