@@ -11,15 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
+    - name: Checkout repo (FINAL GIT FIX)
       uses: actions/checkout@v4
       with:
-        # CRITICAL FIX: Explicitly set submodules to false to bypass the 
-        # persistent Git "exit code 128" error, as the folder should be treated 
-        # as a standard content directory.
+        # CRITICAL FIX 1: Bypass submodule error and fetch full history
         submodules: false
-        # fetch-depth: 0 is no longer needed when submodules is false
-    
+        fetch-depth: 0 # Forces a full clone, clearing the runner's persistent cache/state
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
@@ -34,7 +32,7 @@ jobs:
       env:
         AWS_REGION: ${{ secrets.AWS_REGION }}
 
-    - name: Terraform Apply
+    - name: Terraform Apply (Bucket is created here)
       run: terraform apply -auto-approve
       working-directory: terraform-s3
       env:
@@ -49,11 +47,10 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.REGION }}
-
-    # NOTE: The workaround step is no longer strictly necessary since we fixed 
-    # the checkout, but it doesn't hurt to keep it as a precaution.
-    - name: Prevent git submodule cleanup error (workaround)
+        # CRITICAL FIX 2: Correctly pass the AWS_REGION to the AWS CLI
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        
+    - name: Final Cleanup
       run: |
         # Remove local submodule config to avoid post-job "No url found for submodule" error
         git config --local --remove-section submodule.DevOpsZaid || true
