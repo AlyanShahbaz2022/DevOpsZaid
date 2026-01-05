@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "website_bucket" {
-  bucket = "devopszaid-static-site-hanzai003-20260104"
+  bucket = "devopszaid-final-hanzai-01052026-v1"
 }
 
 resource "aws_s3_bucket_public_access_block" "public_access" {
